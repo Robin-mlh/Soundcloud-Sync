@@ -105,7 +105,7 @@ class MainWindow(QtWidgets.QMainWindow):
         github_action.triggered.connect(lambda: webbrowser.open("https://github.com/Robin-mlh"))
         apropos_menu.addAction(github_action)
         aide_action = QtGui.QAction("Aide", self)
-        aide_action.triggered.connect(lambda: webbrowser.open("https://github.com/Robin-mlh"))
+        aide_action.triggered.connect(lambda: webbrowser.open("https://github.com/Robin-mlh/Soundcloud-Sync/tree/main?tab=readme-ov-file#param%C3%A8tres"))
         apropos_menu.addAction(aide_action)
         version_action = QtGui.QAction("Version", self)
         version_action.triggered.connect(lambda: utils.fenetre_info("Version", f"Version {utils.VERSION}", self))
