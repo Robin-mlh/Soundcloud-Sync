@@ -24,7 +24,9 @@ Vous avez besoin de `Python 3.9` minimum et de `ffmpeg`.
 Pour installer `ffmpeg` sur Windows, utilisez cette commande: `winget ffmpeg`
 Sur Linux, utilisez votre gestionnaire de paquet.
 
-Un éxécutable .exe est disponible pour Windows. Sinon:
+__Un éxécutable .exe est disponible pour Windows: https://github.com/Robin-mlh/Soundcloud-Sync/releases/download/1.0/soundcloud.sync.exe__
+
+__Sinon:__
 
 Pour installer les dépendances, entrez cette commande dans le répertoire du projet.
 
