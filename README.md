@@ -1,20 +1,20 @@
 # Soundcloud Sync
 
-> **Synchroniser vos playlistes, musiques et artistes Soundcloud sur votre PC**
+> **Synchroniser vos playlists, musiques et artistes Soundcloud sur votre PC**
 
 ![screen](ressources/screen1.png)
 
 
 ## Fonctionnement et options:
 
-**Ajoutez un lien Soundcloud (playliste, album, musique, utilisateur) à votre liste d'éléments à synchroniser.
+**Ajoutez un lien Soundcloud (playlist, album, musique, utilisateur) à votre liste d'éléments à synchroniser.
 Dans le répertoire local choisi, les contenus Soundcloud ajoutés seront téléchargés en gardant les métadonnées.**
 
 La colonne Status indique l'état de téléchargement du contenu soundcloud.
 Chaque dossier de synchronisation est indépendant et contient un fichier JSON avec tous les liens soundcloud ajoutés.
 
 En synchronisant un élément, les titres manquants sont téléchargés.
-Si le paramètre n'est pas désactivé, les titres téléchargés qui ne sont plus dans la playliste/album distant sont supprimés.
+Si le paramètre n'est pas désactivé, les titres téléchargés qui ne sont plus dans la playlist/album distant sont supprimés.
 
 
 ## Installation:
@@ -24,7 +24,7 @@ Vous avez besoin de `Python 3.9` minimum et de `ffmpeg`.
 Pour installer `ffmpeg` sur Windows, utilisez cette commande: `winget ffmpeg`
 Sur Linux, utilisez votre gestionnaire de paquet.
 
-__Un éxécutable .exe est disponible pour Windows: https://github.com/Robin-mlh/Soundcloud-Sync/releases/download/1.0/soundcloud.sync.exe__
+__Un éxécutable .exe est disponible pour Windows: https://github.com/Robin-mlh/Soundcloud-Sync/releases__
 
 __Sinon:__
 
@@ -48,7 +48,7 @@ Vous trouverez votre token dans les cookies Soundcloud
 
 
 #### Répertoire de synchronisation
-Vous devez spécifier le chemin du répertoire dans lequel sera téléchargé les musiques.
+Vous devez spécifier le chemin du répertoire dans lequel seront téléchargées les musiques.
 Choisissez un dossier vide, par exemple `Musiques/Soundcloud/`
 
 
