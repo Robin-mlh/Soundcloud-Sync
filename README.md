@@ -7,14 +7,14 @@
 
 ## Fonctionnement et options:
 
-**Ajoutez un lien Soundcloud (playlist, album, musique, utilisateur) à votre liste d'éléments à synchroniser.
-Dans le répertoire local choisi, les contenus Soundcloud ajoutés seront téléchargés en gardant les métadonnées.**
+**Téléchargez et synchronisez des playlistes, albums, musiques, artistes depuis Soundcloud sur votre PC.**
 
-La colonne Status indique l'état de téléchargement du contenu soundcloud.
-Chaque dossier de synchronisation est indépendant et contient un fichier JSON avec tous les liens soundcloud ajoutés.
+Les métadonnées tels que l'artiste, le genre, et l'artwork sont conservés.
+En synchronisant un élément, les titres manquants seront téléchargés.
+Si le paramètre n'est pas désactivé, les titres téléchargés qui ne sont plus dans la playlist/album soundcloud seront supprimés.
 
-En synchronisant un élément, les titres manquants sont téléchargés.
-Si le paramètre n'est pas désactivé, les titres téléchargés qui ne sont plus dans la playlist/album distant sont supprimés.
+Des paramètres sont disponibles pour par exemple convertir les fichiers en MP3,
+ou pour supprimer les fichiers locaux lorsqu'un élément est supprimé.
 
 
 ## Installation:
@@ -50,14 +50,17 @@ Vous trouverez votre token dans les cookies Soundcloud
 #### Répertoire de synchronisation
 Vous devez spécifier le chemin du répertoire dans lequel seront téléchargées les musiques.
 Choisissez un dossier vide, par exemple `Musiques/Soundcloud/`
+Chaque répertoir est indépendant et contient un fichier JSON avec tous les liens soundcloud ajoutés.
 
 
 ## Notes:
 
+Si l'installation des dépendances du requirements.txt échoue avec une version récente de Python, essayez d'utiliser `Python 3.9`.
+
+Il n'est pas possible de télécharger deux musiques avec le même titre dans la même playlist.
+
 Désactiver les services de synchronisation de fichier comme OneDrive et ne pas convertir les fichiers au format MP3
 sont des moyens d'accélérer le téléchargement des contenus.
-
-Si l'installation des dépendances du requirements.txt échoue avec une version récente de Python, essayez d'utiliser `Python 3.9`.
 
 Sur Windows, certains bugs liés au format des noms de fichiers peuvent affecter l'affichage du status de synchronisation d'un élément.
 Voir les caractères interdits dans les noms de fichier Windows.
