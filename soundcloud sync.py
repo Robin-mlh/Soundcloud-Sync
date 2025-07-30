@@ -88,6 +88,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.auto_download_action.triggered.connect(
             lambda: utils.modifier_parametre_config("AUTO_DOWNLOAD", self.auto_download_action.isChecked()))
         parametres_menu.addAction(self.auto_download_action)
+        self.remove_local_action = QtGui.QAction("Supprimer aussi les fichiers locaux lors de la suppréssion d'un élément", self)
+        self.remove_local_action.setCheckable(True)
+        self.remove_local_action.setChecked(config.getboolean("GLOBAL", "REMOVE_LOCAL"))
+        self.remove_local_action.triggered.connect(
+            lambda: utils.modifier_parametre_config("REMOVE_LOCAL", self.remove_local_action.isChecked()))
+        parametres_menu.addAction(self.remove_local_action)
         # Menu Actions.
         actions_menu = menubar.addMenu("Actions")
         actions_config = QtGui.QAction("Configuration", self)
@@ -102,7 +108,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Menu à propos.
         apropos_menu = menubar.addMenu("A propos")
         github_action = QtGui.QAction("Github", self)
-        github_action.triggered.connect(lambda: webbrowser.open("https://github.com/Robin-mlh"))
+        github_action.triggered.connect(lambda: webbrowser.open("https://github.com/Robin-mlh/Soundcloud-Sync"))
         apropos_menu.addAction(github_action)
         aide_action = QtGui.QAction("Aide", self)
         aide_action.triggered.connect(lambda: webbrowser.open("https://github.com/Robin-mlh/Soundcloud-Sync/tree/main?tab=readme-ov-file#param%C3%A8tres"))
@@ -155,11 +161,12 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 json_content = utils.load_json_file(json_path)
                 content = sc_object.resolve(url)
-                titre = utils.remplacer_caract_spec(content.title)
                 if isinstance(content, soundcloud.Track):  # Le lien fourni est une musique.
+                    titre = utils.remplacer_caract_spec(content.title)
                     if not [url, f"/Musiques/{titre}"] in json_content["musiques"]:
                         json_content["musiques"].append((url, f"/Musiques/{titre}"))
                 elif isinstance(content, soundcloud.AlbumPlaylist):
+                    titre = utils.remplacer_caract_spec(content.title)
                     if content.is_album:  # Le lien fourni est un album.
                         if not [url, f"/Albums/{titre}/"] in json_content["albums"]:
                             json_content["albums"].append((url, f"/Albums/{titre}/"))
@@ -200,6 +207,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.bouton_sync.setEnabled(True)
         self.actualiser_affichage_thread()
 
+    def fenetre_config_fermee(self):
+        """ La fenêtre de configuration a été fermée. """
+
+        self.actualiser_affichage_thread()
 
     def config_parametres(self):
         """ Ouvre la fenetre de configuration importée. """
@@ -211,6 +222,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self.config_window:
             # Si la fenetre n'est pas ouverte, l'ouvrir.
             self.config_window = config_windows.ConfigApp()
+            self.config_window.config_closed.connect(self.fenetre_config_fermee)
             self.config_window.show()
         else:  # Si la fenetre est deja ouverte, la mettre au premier plan.
             self.config_window.activateWindow()
