@@ -16,6 +16,9 @@ config.read(utils.CONFIG_PATH)
 
 class ConfigApp(QtWidgets.QWidget):
     """ Fenetre de configuration des paramètres de Soundcloud Sync. """
+
+    config_closed = QtCore.pyqtSignal()
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Configuration de Soundcloud Sync")
@@ -88,6 +91,11 @@ class ConfigApp(QtWidgets.QWidget):
             self,"Sélectionner un dossier","",
             QtWidgets.QFileDialog.Option.ShowDirsOnly)
         self.input2.setText(folder_path)
+
+
+    def closeEvent(self, event):
+        self.config_closed.emit()
+        super().closeEvent(event)
 
 
 def valider_config(self, token, path):
