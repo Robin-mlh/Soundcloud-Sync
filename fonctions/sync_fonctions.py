@@ -27,8 +27,11 @@ class SyncElementThread(QtCore.QThread):
         self.window_object = window_object
 
     def run(self):
-        sync_element(self.window_object, self.library_path,
-                     self.sc_object, self.url)
+        try:
+            sync_element(self.window_object, self.library_path,
+                         self.sc_object, self.url)
+        except (FileNotFoundError, TypeError):
+            pass
         self.sync_finished.emit(None)
 
 
@@ -44,7 +47,10 @@ class SyncAllThread(QtCore.QThread):
         self.window_object = window_object
 
     def run(self):
-        sync_all(self.window_object, self.json_path, self.sc_object)
+        try:
+            sync_all(self.window_object, self.json_path, self.sc_object)
+        except (FileNotFoundError, TypeError):
+            pass
         self.sync_finished.emit(None)
 
 
@@ -81,7 +87,6 @@ def sync_element(window_object, library_path, sc_object, json_element):
         utils.definir_status_element(window_object, ligne_element,
                                      f"Synchronisation...", "orange")
         library_path = Path(f"{library_path}{json_element[1].replace('/', os.sep)}")
-        print(str(library_path))
         library_path.mkdir(parents=True, exist_ok=True)
         for track in content.tracks:
             tracklist.append([sc_object.get_track(track.id).permalink_url, sc_object.get_track(track.id).title])
@@ -108,7 +113,7 @@ def sync_element(window_object, library_path, sc_object, json_element):
     # Pour chaque titre soundcloud distant.
     for track in tracklist:
         ligne_element = utils.trouver_ligne_url(window_object, json_element[0][8:])
-        if not track[1] in list_musiques_telechargees:  # Si la musique n'est pas deja téléchargée.
+        if not utils.remplacer_caract_spec(track[1]) in list_musiques_telechargees:  # Si la musique n'est pas deja téléchargée.
             if isinstance(content, soundcloud.Track):
                 utils.definir_status_element(window_object, ligne_element,
                                              f"Téléchargement en cours...", "orange")
@@ -118,22 +123,27 @@ def sync_element(window_object, library_path, sc_object, json_element):
                 utils.definir_status_element(window_object, ligne_element,
                                              f"Synchronisation... ({nb_fichiers}/{len(tracklist)})", "orange")
             try:
+                if not window_object.label_actualisation.text():
+                    window_object.label_actualisation.setText("Téléchargement en cours...")
                 download_track(track, str(library_path), window_object.convert_mp3_action.isChecked())  # Télécharger le son de la liste tracklist.
+                if window_object.label_actualisation.text() == "Téléchargement en cours...":
+                    window_object.label_actualisation.setText("")
             except PermissionError:
                 pass
 
     # Si l'option de suppression des fichiers intrus est activé.
     if not window_object.bloquer_suppression_action.isChecked():
         if isinstance(content, soundcloud.AlbumPlaylist):
-            tracks_title = [title[1] for title in tracklist]  # Liste des noms de musiques distants.
+            tracks_title = [utils.remplacer_caract_spec(title[1]) for title in tracklist]  # Liste des noms de musiques distants.
             for file_path in library_path.iterdir():  # Parcourir les fichiers locaux.
                 if file_path.is_file():
                     # Si le nom du fichier n'est pas dans la liste des noms de musiques à synchroniser.
                     if utils.remplacer_caract_spec(file_path.stem) not in tracks_title:
-                        print(tracks_title, utils.remplacer_caract_spec(file_path.stem))
                         try:
+                            print(f"Suppréssion du fichier en trop: '{utils.remplacer_caract_spec(file_path.stem)}'")
                             file_path.unlink()  # Supprimer le fichier local.
                         except PermissionError:
+                            print(f"Impossible de supprimer le fichier: '{file_path}'")
                             pass
 
     window_object.actualiser_affichage_thread()  # Actualiser les éléments affichés.
@@ -155,22 +165,23 @@ def download_track(track, path, convert_mp3):
             'preferredcodec': 'mp3',
             'preferredquality': '0',
         }]
-    # Télécharger la musique avec yt-dlp.
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        result = ydl.extract_info(track[0], download=True)
 
-    # Ajouter les métadonnées au fichier.
-    f = music_tag.load_file(result["requested_downloads"][0]["filepath"])
-    f['title'] = result["title"]
-    if result["artists"]:
-        for artist in result["artists"]:
-            f.append_tag('artist', artist)
-    else:
-        f.append_tag('artist', result["uploader"])
-    if result["genres"]:
-        for genre in result["genres"]:
-            f.append_tag('genre', genre)
     try:
+        # Télécharger la musique avec yt-dlp.
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            result = ydl.extract_info(track[0], download=True)
+
+        # Ajouter les métadonnées au fichier.
+        f = music_tag.load_file(result["requested_downloads"][0]["filepath"])
+        f['title'] = result["title"]
+        if result["artists"]:
+            for artist in result["artists"]:
+                f.append_tag('artist', artist)
+        else:
+            f.append_tag('artist', result["uploader"])
+        if result["genres"]:
+            for genre in result["genres"]:
+                f.append_tag('genre', genre)
         f["artwork"] = requests.get(result["thumbnails"][-1]["url"]).content
         f.save()
     except:
