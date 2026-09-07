@@ -27,6 +27,11 @@
 
 ## Installation
 
+**Sur Windows, téléchargez l'installateur MSI ici: https://github.com/terrydavis-toyota/Soundcloud-Sync/releases/tag/1.3
+Puis installez le programme.**
+
+**Sinon, vous devrez utiliser Python:**
+
 Vous avez besoin de `Python 3.9` minimum: https://www.python.org/downloads/
 
 FFMPEG est aussi requis.
